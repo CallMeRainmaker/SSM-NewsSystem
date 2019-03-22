@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: huxudong
-  Date: 19-3-10
-  Time: 下午9:49
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <div class="easyui-layout" data-options="fit:true">
@@ -16,29 +9,24 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="remove()" plain="true">删除</a>
         </div>
         <div class="wu-toolbar-search">
-            <label>角色名称:</label><input id="search-name" class="wu-text" style="height: 20px;width: 100px">
+            <label>分类名:</label><input id="search-name" class="wu-text" style="width:100px;height: 20px">
             <a href="#" id="search-btn" class="easyui-linkbutton" iconCls="icon-search">搜索</a>
         </div>
     </div>
     <!-- End of toolbar -->
     <table id="data-datagrid" class="easyui-datagrid" toolbar="#wu-toolbar"></table>
 </div>
-<style>
-    .selected{
-        background:red;
-    }
-</style>
 <!-- Begin of easyui-dialog -->
-<div id="add-dialog" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:450px; padding:10px;">
+<div id="add-dialog" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:420px; padding:10px;">
     <form id="add-form" method="post">
         <table>
             <tr>
-                <td align="right">用户名称:</td>
-                <td><textarea name="username" rows="6" class="wu-textarea" style="width:260px;height: 30px"></textarea></td>
+                <td width="60" align="right">分类名:</td>
+                <td><input type="text" name="name"  style="width:260px;height: 30px" class="wu-text easyui-validatebox" data-options="required:true, missingMessage:'请填写分类名'" /></td>
             </tr>
             <tr>
-                <td align="right">用户密码:</td>
-                <td><textarea name="password" rows="6" class="wu-textarea" style="width:260px;height: 30px"></textarea></td>
+                <td width="60" align="right">排序:</td>
+                <td><input type="text" name="sort"  style="width:260px;height: 30px" class="wu-text easyui-numberbox easyui-validatebox" value="0" data-options="required:true, missingMessage:'请填写排序'" /></td>
             </tr>
         </table>
     </form>
@@ -49,19 +37,20 @@
         <input type="hidden" name="id" id="edit-id">
         <table>
             <tr>
-                <td align="right">用户名称:</td>
-                <td><textarea id="edit-remark" name="username" rows="6" class="wu-textarea" style="width:260px;height: 30px"></textarea></td>
+                <td width="60" align="right">分类名:</td>
+                <td><input type="text" id="edit-name" style="width:260px;height: 30px" name="name" class="wu-text easyui-validatebox" data-options="required:true, missingMessage:'请填写分类名'" /></td>
             </tr>
             <tr>
-                <td align="right">用户密码:</td>
-                <td><textarea name="password" rows="6" class="wu-textarea" style="width:260px;height: 30px"></textarea></td>
+                <td width="60" align="right">排序:</td>
+                <td><input type="text" id="edit-sort" style="width:260px;height: 30px"  name="sort" class="wu-text easyui-validatebox" value="0" data-options="required:true, missingMessage:'请填写排序'" /></td>
             </tr>
         </table>
     </form>
 </div>
-
 <!-- End of easyui-dialog -->
 <script type="text/javascript">
+
+
     /**
      *  添加记录
      */
@@ -73,7 +62,7 @@
         }
         var data = $("#add-form").serialize();
         $.ajax({
-            url:'/user/add',
+            url:'/news/add',
             dataType:'json',
             type:'post',
             data:data,
@@ -88,6 +77,7 @@
             }
         });
     }
+
     /**
      * Name 修改记录
      */
@@ -99,7 +89,7 @@
         }
         var data = $("#edit-form").serialize();
         $.ajax({
-            url:'/user/edit',
+            url:'/news/edit',
             dataType:'json',
             type:'post',
             data:data,
@@ -121,16 +111,19 @@
     function remove(){
         $.messager.confirm('信息提示','确定要删除该记录？', function(result){
             if(result){
-                var item = $('#data-datagrid').datagrid('getSelected');
+                var item = $('#data-datagrid').datagrid('getSelections');
+                if(item == null || item.length == 0){
+                    $.messager.alert('信息提示','请选择要删除的数据！','info');
+                    return;
+                }
                 $.ajax({
-                    url:'/user/delete',
+                    url:'/news/delete',
                     dataType:'json',
                     type:'post',
-                    data:{id:item.id},
+                    data:{id:item[0].id},
                     success:function(data){
                         if(data.type == 'success'){
                             $.messager.alert('信息提示','删除成功！','info');
-                            $('#edit-dialog').dialog('close');
                             $('#data-datagrid').datagrid('reload');
                         }else{
                             $.messager.alert('信息提示',data.msg,'warning');
@@ -149,7 +142,7 @@
         $('#add-dialog').dialog({
             closed: false,
             modal:true,
-            title: "添加角色信息",
+            title: "添加分类信息",
             buttons: [{
                 text: '确定',
                 iconCls: 'icon-ok',
@@ -160,7 +153,10 @@
                 handler: function () {
                     $('#add-dialog').dialog('close');
                 }
-            }]
+            }],
+            onBeforeOpen:function(){
+                //$("#add-form input").val('');
+            }
         });
     }
 
@@ -169,16 +165,20 @@
      */
     function openEdit(){
         //$('#edit-form').form('clear');
-        var item = $('#data-datagrid').datagrid('getSelected');
+        var item = $('#data-datagrid').datagrid('getSelections');
         if(item == null || item.length == 0){
             $.messager.alert('信息提示','请选择要修改的数据！','info');
             return;
         }
-
+        if(item.length > 1){
+            $.messager.alert('信息提示','请选择一条数据进行修改！','info');
+            return;
+        }
+        item = item[0];
         $('#edit-dialog').dialog({
             closed: false,
             modal:true,
-            title: "修改信息",
+            title: "修改分类信息",
             buttons: [{
                 text: '确定',
                 iconCls: 'icon-ok',
@@ -193,35 +193,39 @@
             onBeforeOpen:function(){
                 $("#edit-id").val(item.id);
                 $("#edit-name").val(item.name);
-                $("#edit-remark").val(item.remark);
+                $("#edit-sort").val(item.sort);
             }
         });
     }
 
+
     //搜索按钮监听
     $("#search-btn").click(function(){
-        $('#data-datagrid').datagrid('reload',{
-            name:$("#search-name").val()
-        });
+        var option = {name:$("#search-name").val()};
+        $('#data-datagrid').datagrid('reload',option);
     });
 
     /**
      * 载入数据
      */
     $('#data-datagrid').datagrid({
-        url:'/user/getUserList',
+        url:'/news/getList',
         rownumbers:true,
         singleSelect:true,
         pageSize:20,
         pagination:true,
         multiSort:true,
         fitColumns:true,
+        idField:'id',
+        treeField:'name',
         fit:true,
         columns:[[
             { field:'chk',checkbox:true},
-            { field:'id',title:'用户ID',width:100,sortable:true},
-            { field:'username',title:'用户名称',width:100,sortable:true},
-            { field:'password',title:'用户密码',width:100,sortable:true}
+            // { field:'name',title:'分类名',width:100,sortable:true,formatter:function(value,row,index){
+            //         return '<a href="/news/category_list?cid='+row.id+'" target="_blank">' + value + '</a>';
+            //     }},
+            { field:'name',title:'分类名',sortable:true,width:100},
+            { field:'sort',title:'排序',sortable:true,width:100},
         ]],
     });
 </script>

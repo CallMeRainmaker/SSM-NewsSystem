@@ -9,6 +9,9 @@
 
     <select id="findUserList" resultType="User">
         select * from user
+        <if test="username != null">
+            where username = #{username}
+        </if>
     </select>
 
     <insert id="add" parameterType="User">

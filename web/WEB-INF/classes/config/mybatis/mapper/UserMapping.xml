@@ -9,6 +9,9 @@
 
     <select id="findUserList" resultType="User">
         select * from user
+        <if test="username != null">
+            where username = #{username}
+        </if>
     </select>
 
     <insert id="add" parameterType="User">
@@ -16,7 +19,7 @@
     </insert>
 
     <update id="edit" parameterType="User">
-        update user set username = #{username} , password = #{password} where id = #{id} 
+        update user set username = #{username} , password = #{password} where id = #{id}
     </update>
 
     <delete id="delete" parameterType="Long">
