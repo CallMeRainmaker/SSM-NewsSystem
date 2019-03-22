@@ -62,7 +62,7 @@
         }
         var data = $("#add-form").serialize();
         $.ajax({
-            url:'/news/add',
+            url:'/newsRange/add',
             dataType:'json',
             type:'post',
             data:data,
@@ -89,7 +89,7 @@
         }
         var data = $("#edit-form").serialize();
         $.ajax({
-            url:'/news/edit',
+            url:'/newsRange/edit',
             dataType:'json',
             type:'post',
             data:data,
@@ -117,7 +117,7 @@
                     return;
                 }
                 $.ajax({
-                    url:'/news/delete',
+                    url:'/newsRange/delete',
                     dataType:'json',
                     type:'post',
                     data:{id:item[0].id},
@@ -209,7 +209,7 @@
      * 载入数据
      */
     $('#data-datagrid').datagrid({
-        url:'/news/getList',
+        url:'/newsRange/getList',
         rownumbers:true,
         singleSelect:true,
         pageSize:20,

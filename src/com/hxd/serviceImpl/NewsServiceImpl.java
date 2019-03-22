@@ -22,7 +22,7 @@ public class NewsServiceImpl implements NewsService {
     public int delete(Long id){
         return newsDao.delete(id);
     }
-    public List<News> findList(){
-        return newsDao.findList();
+    public List<News> getList(){
+        return newsDao.getList();
     }
 }

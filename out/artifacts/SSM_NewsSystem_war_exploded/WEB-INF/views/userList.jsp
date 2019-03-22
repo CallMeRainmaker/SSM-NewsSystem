@@ -130,7 +130,7 @@
                     success:function(data){
                         if(data.type == 'success'){
                             $.messager.alert('信息提示','删除成功！','info');
-                            $('#edit-dialog').dialog('close');
+                            $('#add-dialog').dialog('close');
                             $('#data-datagrid').datagrid('reload');
                         }else{
                             $.messager.alert('信息提示',data.msg,'warning');

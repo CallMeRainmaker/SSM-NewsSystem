@@ -43,10 +43,13 @@
         </div>
         <div title="新闻管理" data-options="iconCls:'icon-chart-curve'" style="padding:5px;">
             <ul class="easyui-tree wu-side-tree">
-                <li iconCls="icon-chart-organisation"><a href="javascript:void(0)" data-icon="icon-chart-organisation" data-link="/news/list" iframe="0">分类管理</a>
+                <li iconCls="icon-chart-organisation"><a href="javascript:void(0)" data-icon="icon-chart-organisation" data-link="/newsRange/list" iframe="0">分类管理</a>
+                </li>
+                <li iconCls="icon-chart-organisation"><a href="javascript:void(0)" data-icon="icon-chart-organisation" data-link="/news/list" iframe="0">新闻管理</a>
                 </li>
             </ul>
         </div>
+
     </div>
 </div>
 <!-- end of sidebar -->

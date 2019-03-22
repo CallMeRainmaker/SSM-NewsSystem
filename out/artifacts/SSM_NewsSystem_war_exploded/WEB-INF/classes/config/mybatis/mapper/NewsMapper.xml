@@ -4,22 +4,22 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hxd.dao.NewsDao">
     <insert id="add" parameterType="News">
-        insert into news(id,name,sort) values (null,#{name},#{sort})
+        insert into news(id,title,abstrs,tags,photo,author,content,viewNumber,commentNumber,createTime)
+        values (null,#{title},#{abstrs},#{tags},#{photo},#{author},#{content},#{viewNumber},#{commentNumber},#{createTime})
     </insert>
 
     <update id="edit" parameterType="News">
-        update news set name = #{name} , sort = #{sort} where id = #{id}
+        update news set title = #{title},abstrs= #{abstrs},tags= #{tags},photo= #{photo},
+        author= #{author},content= #{content},viewNumber= #{viewNumber},commentNumber= #{commentNumber}
+        where id = #{id}
     </update>
 
     <delete id="delete" parameterType="Long">
         delete from news where id = #{id};
     </delete>
 
-    <select id="findList" resultType="News">
+    <select id="getList" resultType="News">
         select * from news
-        <if test="name != null">
-            where name like '%${name}%'
-        </if>
-        order by sort asc
+        order by createTime desc
     </select>
 </mapper>

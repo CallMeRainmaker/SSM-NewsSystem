@@ -10,5 +10,5 @@ public interface NewsService {
     public int add(News news);
     public int edit(News news);
     public int delete(Long id);
-    public List<News> findList();
+    public List<News> getList();
 }
