@@ -91,7 +91,7 @@
             dataType:'json',
             success:function (data) {
                 if(data.type == 'success'){
-                    window.location = "main"
+                    window.location.href = "main"
                 }else{
                     removeClass(document.querySelector(".login"), "active");
                     removeClass(document.querySelector(".sk-rotating-plane"), "active");

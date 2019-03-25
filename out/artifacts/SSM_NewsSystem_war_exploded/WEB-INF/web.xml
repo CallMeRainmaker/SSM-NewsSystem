@@ -37,10 +37,12 @@
         <param-value>classpath:config/spring/applicationContext.xml</param-value>
     </context-param>
     <!-- ContextLoaderListener监听器 -->
+    <!--初始化IOC容器-->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
     <!-- 日志配置 -->
+
     <context-param>
         <param-name>log4jConfigLocation</param-name>
         <param-value>classpath:config/log4j.properties</param-value>
@@ -77,6 +79,7 @@
         <location>/WEB-INF/errors/500.jsp</location>
     </error-page>
 
+    <!--初始页面-->
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>

@@ -96,6 +96,6 @@
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
 
-	<bean id="gson" class="com.google.gson.Gson" scope="prototype"></bean>
+	<!--<bean id="gson" class="com.google.gson.Gson" scope="prototype"></bean>-->
 
 </beans>

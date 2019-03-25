@@ -9,101 +9,24 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="remove()" plain="true">删除</a>
         </div>
         <div class="wu-toolbar-search">
-            <label>分类名:</label><input id="search-name" class="wu-text" style="width:100px;height: 20px">
+            <label>新闻标题:</label><input id="search-title" class="wu-text" style="width:100px;height:20px" >
+            <label>新闻作者:</label><input id="search-author" class="wu-text" style="width:100px;height: 20px;">
+            <label>所属分类:</label>
+            <select id="search-category" class="easyui-combobox" panelHeight="auto" style="width:120px">
+                <option value="-1">全部</option>
+                <c:forEach items="${ NewsRangeList }" var="newsRange">
+                    <option value="${newsRange.id }">${newsRange.name }</option>
+                </c:forEach>
+            </select>
             <a href="#" id="search-btn" class="easyui-linkbutton" iconCls="icon-search">搜索</a>
         </div>
     </div>
     <!-- End of toolbar -->
     <table id="data-datagrid" class="easyui-datagrid" toolbar="#wu-toolbar"></table>
 </div>
-<!-- Begin of easyui-dialog -->
-<div id="add-dialog" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:420px; padding:10px;">
-    <form id="add-form" method="post">
-        <table>
-            <tr>
-                <td width="60" align="right">分类名:</td>
-                <td><input type="text" name="name"  style="width:260px;height: 30px" class="wu-text easyui-validatebox" data-options="required:true, missingMessage:'请填写分类名'" /></td>
-            </tr>
-            <tr>
-                <td width="60" align="right">排序:</td>
-                <td><input type="text" name="sort"  style="width:260px;height: 30px" class="wu-text easyui-numberbox easyui-validatebox" value="0" data-options="required:true, missingMessage:'请填写排序'" /></td>
-            </tr>
-        </table>
-    </form>
-</div>
-<!-- 修改窗口 -->
-<div id="edit-dialog" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:450px; padding:10px;">
-    <form id="edit-form" method="post">
-        <input type="hidden" name="id" id="edit-id">
-        <table>
-            <tr>
-                <td width="60" align="right">分类名:</td>
-                <td><input type="text" id="edit-name" style="width:260px;height: 30px" name="name" class="wu-text easyui-validatebox" data-options="required:true, missingMessage:'请填写分类名'" /></td>
-            </tr>
-            <tr>
-                <td width="60" align="right">排序:</td>
-                <td><input type="text" id="edit-sort" style="width:260px;height: 30px"  name="sort" class="wu-text easyui-validatebox" value="0" data-options="required:true, missingMessage:'请填写排序'" /></td>
-            </tr>
-        </table>
-    </form>
-</div>
+
 <!-- End of easyui-dialog -->
 <script type="text/javascript">
-
-
-    /**
-     *  添加记录
-     */
-    function add(){
-        var validate = $("#add-form").form("validate");
-        if(!validate){
-            $.messager.alert("消息提醒","请检查你输入的数据!","warning");
-            return;
-        }
-        var data = $("#add-form").serialize();
-        $.ajax({
-            url:'/newsRange/add',
-            dataType:'json',
-            type:'post',
-            data:data,
-            success:function(data){
-                if(data.type == 'success'){
-                    $.messager.alert('信息提示','添加成功！','info');
-                    $('#add-dialog').dialog('close');
-                    $('#data-datagrid').datagrid('reload');
-                }else{
-                    $.messager.alert('信息提示',data.msg,'warning');
-                }
-            }
-        });
-    }
-
-    /**
-     * Name 修改记录
-     */
-    function edit(){
-        var validate = $("#edit-form").form("validate");
-        if(!validate){
-            $.messager.alert("消息提醒","请检查你输入的数据!","warning");
-            return;
-        }
-        var data = $("#edit-form").serialize();
-        $.ajax({
-            url:'/newsRange/edit',
-            dataType:'json',
-            type:'post',
-            data:data,
-            success:function(data){
-                if(data.type == 'success'){
-                    $.messager.alert('信息提示','修改成功！','info');
-                    $('#edit-dialog').dialog('close');
-                    $('#data-datagrid').datagrid('reload');
-                }else{
-                    $.messager.alert('信息提示',data.msg,'warning');
-                }
-            }
-        });
-    }
 
     /**
      * 删除记录
@@ -117,7 +40,7 @@
                     return;
                 }
                 $.ajax({
-                    url:'/newsRange/delete',
+                    url:'delete',
                     dataType:'json',
                     type:'post',
                     data:{id:item[0].id},
@@ -139,25 +62,7 @@
      */
     function openAdd(){
         //$('#add-form').form('clear');
-        $('#add-dialog').dialog({
-            closed: false,
-            modal:true,
-            title: "添加分类信息",
-            buttons: [{
-                text: '确定',
-                iconCls: 'icon-ok',
-                handler: add
-            }, {
-                text: '取消',
-                iconCls: 'icon-cancel',
-                handler: function () {
-                    $('#add-dialog').dialog('close');
-                }
-            }],
-            onBeforeOpen:function(){
-                //$("#add-form input").val('');
-            }
-        });
+        window.location.href = '/news/addPage';
     }
 
     /**
@@ -165,43 +70,18 @@
      */
     function openEdit(){
         //$('#edit-form').form('clear');
-        var item = $('#data-datagrid').datagrid('getSelections');
+        var item = $('#data-datagrid').datagrid('getSelected');
         if(item == null || item.length == 0){
             $.messager.alert('信息提示','请选择要修改的数据！','info');
             return;
         }
-        if(item.length > 1){
-            $.messager.alert('信息提示','请选择一条数据进行修改！','info');
-            return;
-        }
-        item = item[0];
-        $('#edit-dialog').dialog({
-            closed: false,
-            modal:true,
-            title: "修改分类信息",
-            buttons: [{
-                text: '确定',
-                iconCls: 'icon-ok',
-                handler: edit
-            }, {
-                text: '取消',
-                iconCls: 'icon-cancel',
-                handler: function () {
-                    $('#edit-dialog').dialog('close');
-                }
-            }],
-            onBeforeOpen:function(){
-                $("#edit-id").val(item.id);
-                $("#edit-name").val(item.name);
-                $("#edit-sort").val(item.sort);
-            }
-        });
+        window.location.href = '/news/editPage?id=' + item.id;
     }
 
 
     //搜索按钮监听
     $("#search-btn").click(function(){
-        var option = {name:$("#search-name").val()};
+        var option = {title:$("#search-title").val(),categoryId:$("#search-category").combobox('getValue'),author:$("#search-author").val()};
         $('#data-datagrid').datagrid('reload',option);
     });
 
@@ -209,7 +89,7 @@
      * 载入数据
      */
     $('#data-datagrid').datagrid({
-        url:'/newsRange/getList',
+        url:'list',
         rownumbers:true,
         singleSelect:true,
         pageSize:20,
@@ -221,11 +101,19 @@
         fit:true,
         columns:[[
             { field:'chk',checkbox:true},
-            // { field:'name',title:'分类名',width:100,sortable:true,formatter:function(value,row,index){
-            //         return '<a href="/news/category_list?cid='+row.id+'" target="_blank">' + value + '</a>';
-            //     }},
-            { field:'name',title:'分类名',sortable:true,width:100},
-            { field:'sort',title:'排序',sortable:true,width:100},
+            { field:'title',title:'标题',width:300,formatter:function(value,row,index){
+                    return '<a href="../../news/detail?id='+row.id+'" target="_blank">' + value + '</a>';
+                }},
+            { field:'categoryId',title:'分类',width:80,formatter:function(value,row,index){
+                    return row.newsCategory.name;
+                }},
+            { field:'author',title:'作者',width:80},
+            { field:'tags',title:'标签',width:100},
+            { field:'viewNumber',title:'浏览量',sortable:true,width:30},
+            { field:'commentNumber',title:'评论数',sortable:true,width:30},
         ]],
     });
 </script>
+
+
+

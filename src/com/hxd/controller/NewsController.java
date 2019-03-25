@@ -20,4 +20,16 @@ public class NewsController {
         modelAndView.setViewName("newsList");
         return modelAndView;
     }
+
+    @RequestMapping(value = "/addPage",method = RequestMethod.GET)
+    public ModelAndView addPage(ModelAndView modelAndView){
+        modelAndView.setViewName("add");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/editPage",method = RequestMethod.GET)
+    public ModelAndView editPage(ModelAndView modelAndView){
+        modelAndView.setViewName("edit");
+        return modelAndView;
+    }
 }
